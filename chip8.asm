@@ -459,19 +459,19 @@ proc chip8_emulatecycle
         jmp     .sw1_end
 
 .sw1_case_C000: ; Cxkk: V[x] = random byte AND kk
-        ;
+        ; TODO
         jmp     .sw1_end
 
-.sw1_case_D000:
-        ;
+.sw1_case_D000: ; Dxyn: Display an n-byte sprite starting at memory location I at (Vx, Vy) on the screen, VF = collision
+        ; TODO
         jmp     .sw1_end
 
-.sw1_case_E000:
-        ;
+.sw1_case_E000: ; key-pressed events
+        ; TODO
         jmp     .sw1_end
 
-.sw1_case_F000:
-        ;
+.sw1_case_F000: ; misc
+        ; TODO
         jmp     .sw1_end
 
 .sw1_default:
