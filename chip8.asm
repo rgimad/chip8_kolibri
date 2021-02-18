@@ -392,16 +392,37 @@ proc chip8_emulatecycle
             mov     byte [V + 0xF], cl
             jmp     .sw3_end
 
-        .sw3_case_6:
-            ;
+        .sw3_case_6: ; TODO check; V[x] = V[x] SHR 1 ; V[0xF] = least-significant bit of V[x] before shift
+            movzx   ecx, byte [x]
+            mov     al, byte [V + ecx]
+            and     al, 0x01
+            mov     byte [V + 0xF], al
+            shr     byte [V + ecx], 1
             jmp     .sw3_end
 
-        .sw3_case_7:
-            ;
+        .sw3_case_7: ; TODO check; V[x] = V[y] - V[x]; if no borrow, move 1 to V[0xF]
+            movzx   ecx, byte [y]
+            movzx   edx, byte [x]
+            mov     al, byte [V + ecx]
+            mov     bl, byte [V + edx]
+            sub     al, bl
+            mov     byte [V + ecx], al
+
+            xor     cl, cl
+            cmp     al, bl
+            jbe     @f
+            inc     cl
+        @@:
+            mov     byte [V + 0xF], cl
             jmp     .sw3_end
 
-        .sw3_case_E:
-            ;
+        .sw3_case_E: ; TODO check; V[0xF] = most-significant bit of V[x] before shift
+            movzx   ecx, byte [x]
+            mov     al, byte [V + ecx]
+            shr     al, 7
+            and     al, 0x01
+            mov     byte [V + 0xF], al
+            shl     byte [V + ecx], 1
             jmp     .sw3_end
 
         .sw3_default:
