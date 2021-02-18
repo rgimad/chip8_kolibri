@@ -356,16 +356,40 @@ proc chip8_emulatecycle
             movzx   ecx, byte [x]
             movzx   edx, byte [y]
             mov     al, byte [V + ecx]
-            xor      al, byte [V + edx]
+            xor     al, byte [V + edx]
             mov     byte [V + ecx], al
             jmp     .sw3_end
 
-        .sw3_case_4:
-            ;
+        .sw3_case_4: ; V[x] = V[x] + V[y]; if carry, move 1 to V[0xF]
+            movzx   ecx, byte [x]
+            movzx   edx, byte [y]
+            movzx   ax, byte [V + ecx]
+            movzx   bx, byte [V + edx]
+            add     ax, bx
+            mov     byte [V + ecx], al
+
+            xor     cl, cl 
+            cmp     ax, 255
+            jbe     @f
+            inc     cl
+        @@:
+            mov     byte [V + 0xF], cl 
             jmp     .sw3_end
 
-        .sw3_case_5:
-            ;
+        .sw3_case_5: ;TODO check; V[x] = V[x] - V[y]; if no borrow, move 1 to V[0xF]
+            movzx   ecx, byte [x]
+            movzx   edx, byte [y]
+            mov     al, byte [V + ecx]
+            mov     bl, byte [V + edx]
+            sub     al, bl
+            mov     byte [V + ecx], al
+
+            xor     cl, cl
+            cmp     al, bl
+            jbe     @f
+            inc     cl
+        @@:
+            mov     byte [V + 0xF], cl
             jmp     .sw3_end
 
         .sw3_case_6:
