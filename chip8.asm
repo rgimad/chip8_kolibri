@@ -432,8 +432,17 @@ proc chip8_emulatecycle
         add     word [P_C], 2
         jmp     .sw1_end
 
-.sw1_case_9000: ; 9xy0: skip instruction if V[x] != V[y]
-        ;
+.sw1_case_9000: ; TODO check; 9xy0: skip instruction if V[x] != V[y]
+        movzx   ecx, byte [x]
+        mov     al, byte [V + ecx]
+        movzx   ecx, byte [y]
+        mov     bl, byte [V + ecx]
+        mov     cx, 2
+        cmp     al, bl
+        je      @f
+        mov     cx, 4
+@@:
+        add     word [P_C], cx
         jmp     .sw1_end
 
 .sw1_case_A000: ; Annn: set I to address nnn
