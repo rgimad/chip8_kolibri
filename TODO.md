@@ -2,7 +2,7 @@
 - implement all commands marked as TODO
 - manually check their correctness
 - add unknown_opcode(x) function
-- add rand() simple implementation
+- ~~add rand() simple implementation~~
 - add chip8_tick() function
 - add main cycle\
   using sysfn 23 wait event with timeout 0.05 sec,\
