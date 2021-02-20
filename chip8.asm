@@ -81,7 +81,19 @@ end if
         mov     byte [chip8_draw_flag], 1
         mov     byte [delay_timer], 0
         mov     byte [sound_timer], 0
-        ; TODO: srand(time(NULL)) here
+        stdcall _getseed
+        stdcall _srand, eax
+
+        stdcall _rand
+        DEBUGF  DBG_INFO, "rand() = %u\n", eax
+        ;stdcall _rand
+        ;DEBUGF  DBG_INFO, "rand() = %u\n", eax
+        ;stdcall _rand
+        ;DEBUGF  DBG_INFO, "rand() = %u\n", eax
+        ;stdcall _rand
+        ;DEBUGF  DBG_INFO, "rand() = %u\n", eax
+        ;stdcall _rand
+        ;DEBUGF  DBG_INFO, "rand() = %u\n", eax
 
 .chip8_loadgame:
         mov     dword [fread_struct.filename], cmdline
@@ -486,12 +498,46 @@ align 4
 proc _memset stdcall, dest:dword, val:byte, cnt:dword ; doesnt clobber any registers
         ;DEBUGF  DBG_INFO, "memset(%x, %u, %u)\n", [dest], [val], [cnt]
         push    eax ecx edi
-        mov     edi, [dest]
-        mov     al,  [val]
-        mov     ecx, [cnt]
+        mov     edi, dword [dest]
+        mov     al,  byte [val]
+        mov     ecx, dword [cnt]
         rep     stosb   
         pop     edi ecx eax
         ret 
+endp
+
+align 4
+proc _srand stdcall, seed:dword
+        push    eax
+        ;DEBUGF  DBG_INFO, "_srand: next_rand = %u\n", [next_rand]
+        mov     eax, dword [seed]
+        mov     dword [next_rand], eax
+        pop     eax
+        ret
+endp
+
+align 4
+proc _rand stdcall
+        push    ebx edx
+        ;DEBUGF  DBG_INFO, "_rand: next_rand = %u\n", [next_rand]
+        mov     eax, dword [next_rand]
+        mov     ebx, 214013
+        mul     ebx
+        add     eax, 2531011
+        mov     dword [next_rand], eax
+        shr     eax, 16
+        and     eax, 0x7fff
+        pop     edx ebx
+        ret
+endp
+
+align 4
+proc _getseed stdcall
+        push    edx
+        rdtsc
+        xor     eax, edx
+        pop     edx
+        ret
 endp
 
 ;=========================================
@@ -526,6 +572,7 @@ endp
         stackmem    dw STACK_SIZE dup(0)  ; stack memory
         key         db KEY_SIZE dup (0) ; keyboard
         chip8_draw_flag db 0
+        next_rand       dd 1
 
         align 4
         fread_struct:
