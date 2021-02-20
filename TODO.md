@@ -1,7 +1,7 @@
 #### High priority:
 - implement all commands marked as TODO
 - manually check their correctness
-- add unknown_opcode(x) function
+- ~~add unknown_opcode(x) function~~
 - ~~add rand() simple implementation~~
 - add chip8_tick() function
 - add main cycle\

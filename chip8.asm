@@ -95,6 +95,12 @@ end if
         ;stdcall _rand
         ;DEBUGF  DBG_INFO, "rand() = %u\n", eax
 
+        ;mov     word [opcode], 0xBFAF
+        ;movzx   eax, word [opcode]
+        ;mov     eax, 0xABCDEF92
+        ;stdcall unknown_opcode, eax
+        ;DEBUGF  DBG_INFO, "testprint\n"
+
 .chip8_loadgame:
         mov     dword [fread_struct.filename], cmdline
         mov     eax, 70
@@ -240,7 +246,8 @@ proc chip8_emulatecycle
             jmp     .sw2_end
 
         .sw2_default:
-            ; unknown opcode !
+            movzx   eax, word [opcode]
+            stdcall unknown_opcode, eax
         .sw2_end:
         jmp     .sw1_end
 
@@ -438,7 +445,8 @@ proc chip8_emulatecycle
             jmp     .sw3_end
 
         .sw3_default:
-            ; unknown opcode !
+            movzx   eax, word [opcode]
+            stdcall unknown_opcode, eax
 
         .sw3_end:
         add     word [P_C], 2
@@ -487,10 +495,18 @@ proc chip8_emulatecycle
         jmp     .sw1_end
 
 .sw1_default:
-        ; unknown opcode !
+        movzx   eax, word [opcode]
+        stdcall unknown_opcode, eax
 
 .sw1_end:
         ret
+endp
+
+align 4
+proc unknown_opcode stdcall, op:word
+        DEBUGF DBG_ERR, "Error: unknown opcode 0x%x\n", [op]:4
+        mov     eax, -1
+        int     0x40
 endp
 
 ; note by stdcall convention callee is responsible for cleaning up the stack, arguments are pushed onto the stack in right-to-left order
