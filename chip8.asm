@@ -481,15 +481,16 @@ proc chip8_emulatecycle
         ret
 endp
 
+; note by stdcall convention callee is responsible for cleaning up the stack, arguments are pushed onto the stack in right-to-left order
 align 4
-proc _memset stdcall, dest:dword, val:byte, cnt:dword
+proc _memset stdcall, dest:dword, val:byte, cnt:dword ; doesnt clobber any registers
         ;DEBUGF  DBG_INFO, "memset(%x, %u, %u)\n", [dest], [val], [cnt]
-        push    edi
+        push    eax ecx edi
         mov     edi, [dest]
         mov     al,  [val]
         mov     ecx, [cnt]
         rep     stosb   
-        pop     edi
+        pop     edi ecx eax
         ret 
 endp
 
