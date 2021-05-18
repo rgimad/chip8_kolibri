@@ -1,1 +1,1 @@
-fasm chip8.asm
+fasm chip8.asm chip8
