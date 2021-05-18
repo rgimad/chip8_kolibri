@@ -478,8 +478,11 @@ proc chip8_emulatecycle
         mov     word [P_C], ax
         jmp     .sw1_end
 
-.sw1_case_C000: ; Cxkk: V[x] = random byte AND kk
-        ; TODO
+.sw1_case_C000: ; TODO check; Cxkk: V[x] = random byte AND kk
+        stdcall _rand
+        and     al, byte [kk]
+        movzx   ecx, byte [x]
+        mov     byte [V + ecx], al
         jmp     .sw1_end
 
 .sw1_case_D000: ; Dxyn: Display an n-byte sprite starting at memory location I at (Vx, Vy) on the screen, VF = collision
