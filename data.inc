@@ -45,7 +45,7 @@
             .filename:      dd 0               ; + 24
 
         sys_colors system_colors
-        main_title db 'CHIP-8 Emulator',0
+        main_window_title db 'CHIP-8 Emulator',0
 
 ;=========================================
 align 16

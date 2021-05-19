@@ -128,6 +128,7 @@ emulation_thread:
 
         jmp     emulation_thread
 
+include 'gui.inc'
 
 include 'emu.inc'
 
