@@ -71,7 +71,7 @@ start:
 
 .event_loop:
         mcall   23, CLOCK_RATE ; wait for event with CLOCK_RATE timeout
-        DEBUGF  DBG_INFO, "evenp loop iter i\n"
+        ;DEBUGF  DBG_INFO, "evenp loop iter i\n"
 
         cmp     eax, 1
         je      .event_redraw
@@ -92,7 +92,7 @@ start:
                 mcall   -1
 
         .event_default:
-                ;stdcall chip8_emulatecycle
+                stdcall chip8_emulatecycle
                 cmp     byte [chip8_draw_flag], 0
                 jz      @f        
                 stdcall draw_screen
