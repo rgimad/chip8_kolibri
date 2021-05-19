@@ -465,6 +465,24 @@ proc chip8_emulatecycle stdcall
 endp
 
 
+; tick the timers
+align 4
+proc chip8_tick stdcall
+        cmp     byte [delay_timer], 0
+        jz      @f
+        dec     byte [delay_timer]
+@@:
+        cmp     byte [sound_timer], 0
+        jz      .ret
+        dec     byte [sound_timer]
+        cmp     byte [sound_timer], 0
+        jnz     @f
+        DEBUGF  DBG_INFO, "BEEP!\n"
+@@:
+.ret:
+endp
+
+
 ; print unknown opcode error & exit
 align 4
 proc unknown_opcode stdcall, op:word
