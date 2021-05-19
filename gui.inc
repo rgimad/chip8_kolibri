@@ -17,7 +17,7 @@ endp
 
 ; draw screen
 align 4
-proc draw_screen
+proc draw_screen stdcall
         pushad
         locals
             row_ind dd ?

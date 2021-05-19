@@ -481,6 +481,7 @@ proc chip8_tick stdcall
         DEBUGF  DBG_INFO, "BEEP!\n"
 @@:
 .ret:
+        ret
 endp
 
 

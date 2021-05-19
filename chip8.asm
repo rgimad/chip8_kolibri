@@ -71,6 +71,7 @@ start:
 
 .event_loop:
         mcall   23, CLOCK_RATE ; wait for event with CLOCK_RATE timeout
+        DEBUGF  DBG_INFO, "evenp loop iter i\n"
 
         cmp     eax, 1
         je      .event_redraw
