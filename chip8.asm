@@ -33,6 +33,7 @@ GFX_ROWS = 32
 GFX_COLS = 64
 GFX_SIZE = GFX_ROWS * GFX_COLS
 GFX_PIX_SIZE = 10
+CLOCK_RATE = 2 ; in 10^-2 seconds
 
 
 include '../../macros.inc'
@@ -50,6 +51,14 @@ start:
         mov     eax, 68
         mov     ebx, 11
         int     0x40
+
+        ; get id of current (main) thread
+        ; mov     eax, 9
+        ; mov     ebx, tmp_buf
+        ; mov     ecx, -1
+        ; int     0x40
+        ; mov     eax, dword [tmp_buf + 30]
+        ; mov     dword [main_thread_id], eax
 
         ; TODO set keyboard mode (which?)
         ; maybe to chip8_init
@@ -74,37 +83,51 @@ start:
         DEBUGF  DBG_INFO, "file was read. bytes: %x %x %x..", [memory + 0x200], [memory + 0x200 + 4], [memory + 0x200 + 8]
         
         ; allocate memory for emulation thread
-        mov     eax, 68
-        mov     ebx, 12
-        mov     ecx, 4096
-        int     0x40
-        mov     [emulation_thread_stack_bottom], eax
+        ; mov     eax, 68
+        ; mov     ebx, 12
+        ; mov     ecx, 4096
+        ; int     0x40
+        ; mov     [emulation_thread_stack_bottom], eax
 
         ; run emulation in new thread
-        mov     eax, 51
-        mov     ebx, 1
-        mov     ecx, emulation_thread
-        mov     edx, [emulation_thread_stack_bottom]
-        add     edx, 4092 ; now edx is stack top
-        int     0x40
+        ; mov     eax, 51
+        ; mov     ebx, 1
+        ; mov     ecx, emulation_thread
+        ; mov     edx, [emulation_thread_stack_bottom]
+        ; add     edx, 4092 ; now edx is stack top
+        ; int     0x40
+        ; mov     dword [emulation_thread_id], eax
 
 .event_loop:
-        mcall   10 ; wait for event
+        mcall   23, CLOCK_RATE ; wait for event with CLOCK_RATE timeout
 
         cmp     eax, 1
         je      .event_redraw
 
-        jmp     .event_other
+        cmp     eax, 3
+        je      .event_button
+
+        jmp     .event_default
 
         .event_redraw:
                 stdcall draw_main_window
-                jmp     .event_loop
+                jmp     .event_default
 
-        .event_other:
-                ; for other events
+        .event_button:
+                mcall   17
+                cmp     ah, 1
+                jne     .event_default
+                mcall   -1
 
+        .event_default:
+                stdcall chip8_emulatecycle
+                cmp     byte [chip8_draw_flag], 0
+                jz      @f        
+                ;; TODO: draw map
+                mov     byte [chip8_draw_flag], 0
+        @@:
+                stdcall chip8_tick
         jmp     .event_loop
-        
 
 .file_not_found:
         DEBUGF  DBG_ERR, "Unable to open game file! eax = %u\n", eax
@@ -117,16 +140,23 @@ start:
 ;;;;;;;;;;;;;;;;;;;;;;;
 
 
-emulation_thread:
-        ; TODO: struct timeval clock_now; gettimeofday(&clock_now, NULL);
+; emulation_thread:
+;         stdcall get_clock
+;         mov     dword [clock_now], eax
 
-        stdcall chip8_emulatecycle
+;         stdcall chip8_emulatecycle
 
-        ; TODO: if (chip8_draw_flag) {  draw(); chip8_draw_flag = false; } }
-
-        ; TODO: if (timediff_ms(&clock_now, &clock_prev) >= CLOCK_RATE_MS) { chip8_tick(); clock_prev = clock_now; }
-
-        jmp     emulation_thread
+;         ; TODO: if (chip8_draw_flag) {  draw(); chip8_draw_flag = false; } }
+;         cmp     byte [chip8_draw_flag], 0
+;         jz      @f
+;         mov     eax, 60
+;         mov     ebx, 2
+;         mov     ecx, dword [main_thread_id]
+;         mov     edx, 0x1337
+;         ;;
+; @@:
+;         ; TODO: if (timediff_ms(&clock_now, &clock_prev) >= CLOCK_RATE_MS) { chip8_tick(); clock_prev = clock_now; }
+;         jmp     emulation_thread
 
 include 'gui.inc'
 

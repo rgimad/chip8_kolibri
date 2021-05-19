@@ -46,3 +46,15 @@ proc _getseed stdcall
         pop     edx
         ret
 endp
+
+; ; get seconds count
+; align 4
+; proc get_clock stdcall
+; ; out: eax - time from system start in 10^-2 secs
+;         push    ebx
+;         mov     eax, 26
+;         mov     ebx, 9
+;         int     0x40
+;         pop     ebx
+;         ret
+; endp

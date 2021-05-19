@@ -468,6 +468,7 @@ endp
 ; tick the timers
 align 4
 proc chip8_tick stdcall
+; destroys: flags
         cmp     byte [delay_timer], 0
         jz      @f
         dec     byte [delay_timer]
