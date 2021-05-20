@@ -509,7 +509,10 @@ proc chip8_emulatecycle stdcall
             jmp     .sw4_end
 
         .sw4_case_1E: ; I = I + V[X]
-            ; TODO impl
+            ; V[0xF] = (I + V[x] > 0xfff) ? 1 : 0; (TODO?? (no this line in other chip8 emulators))
+            movzx   ecx, byte [x]
+            movzx   ax, byte [V + ecx]
+            add     word [I], ax
             add     word [P_C], 2
             jmp     .sw4_end
 
@@ -521,8 +524,20 @@ proc chip8_emulatecycle stdcall
             add     word [P_C], 2
             jmp     .sw4_end
 
-        .sw4_case_33: ; Store BCD for V[X] starting at address I
-            ; TODO impl
+        .sw4_case_33: ; TODO check; Store BCD for V[X] starting at address I
+            movzx   ecx, byte [x]
+            movzx   ebx, byte [V + ecx]
+
+            stdcall mod_div, ebx, 1000, 100
+            movzx   ecx, word [I]
+            mov     byte [memory + ecx], eax
+
+            stdcall mod_div, ebx, 100, 10
+            mov     byte [memory + ecx + 1], eax
+
+            stdcall mod_div, ebx, 10, 1
+            mov     byte [memory + ecx + 2], eax
+
             add     word [P_C], 2
             jmp     .sw4_end
 
