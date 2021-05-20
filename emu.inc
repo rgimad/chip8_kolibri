@@ -101,6 +101,7 @@ proc chip8_emulatecycle stdcall
         movzx   bx, byte [memory + 1 + ecx]
         or      ax, bx
         mov     word [opcode], ax
+        DEBUGF  DBG_INFO, "opcode = 0x%x, ax = 0x%x\n", [opcode]:4, ax
 
         shr     ax, 8
         and     ax, 0x000F
@@ -600,6 +601,7 @@ proc unknown_opcode stdcall, op:word
         DEBUGF DBG_ERR, "Error: unknown opcode 0x%x\n", [op]:4
         mov     eax, -1
         int     0x40
+        ret
 endp
 
 ; draw sprite from memory to gfx; TODO check;

@@ -34,6 +34,8 @@ start:
         ; TODO set keyboard mode (which?)
         ; maybe to chip8_init
 
+        stdcall chip8_init ; initialize
+
         DEBUGF  DBG_INFO, "app started, args = %s\n", cmdline
         DEBUGF  DBG_INFO, "MAX_GAME_SIZE = %x = %u\n", MAX_GAME_SIZE, MAX_GAME_SIZE
 
@@ -51,7 +53,7 @@ start:
         stdcall chip8_loadgame, fread_struct
         jz      .file_not_found
 
-        DEBUGF  DBG_INFO, "file was read. bytes: %x %x %x..", [memory + 0x200], [memory + 0x200 + 4], [memory + 0x200 + 8]
+        DEBUGF  DBG_INFO, "file was read. bytes: %x %x %x..\n", [memory + 0x200], [memory + 0x200 + 4], [memory + 0x200 + 8]
         
         ; allocate memory for emulation thread
         ; mov     eax, 68
