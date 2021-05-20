@@ -445,15 +445,101 @@ proc chip8_emulatecycle stdcall
         jmp     .sw1_end
 
 .sw1_case_D000: ; Dxyn: Display an n-byte sprite starting at memory location I at (Vx, Vy) on the screen, VF = collision
-        ; TODO
+        ; TODO impl
         jmp     .sw1_end
 
 .sw1_case_E000: ; key-pressed events
-        ; TODO
+        ; TODO impl
         jmp     .sw1_end
 
 .sw1_case_F000: ; misc
-        ; TODO
+        cmp    byte [kk], 0x07
+        je     .sw4_case_07
+
+        cmp    byte [kk], 0x0A
+        je     .sw4_case_0A
+
+        cmp    byte [kk], 0x15
+        je     .sw4_case_15
+
+        cmp    byte [kk], 0x18
+        je     .sw4_case_18
+
+        cmp    byte [kk], 0x1E
+        je     .sw4_case_1E
+
+        cmp    byte [kk], 0x29
+        je     .sw4_case_29
+
+        cmp    byte [kk], 0x33
+        je     .sw4_case_33
+
+        cmp    byte [kk], 0x55
+        je     .sw4_case_55
+
+        cmp    byte [kk], 0x65
+        je     .sw4_case_65
+
+        jmp    .sw4_default
+
+        .sw4_case_07: ; TODO check; V[X] = delay timer
+            mov     al, byte [delay_timer]
+            movzx   ecx, byte [x]
+            mov     byte [V + ecx], al
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_case_0A: ; wait for key instruction
+            ; TODO impl
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_case_15: ; TODO check; delay_timer = V[X]
+            movzx   ecx, byte [x]
+            mov     al, byte [V + ecx]
+            mov     byte [delay_timer], al
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_case_18: ; TODO check; sound_timer = V[X]
+            movzx   ecx, byte [x]
+            mov     al, byte [V + ecx]
+            mov     byte [sound_timer], al
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_case_1E: ; I = I + V[X]
+            ; TODO impl
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_case_29: ; TODO check; I = location of font for character V[X]
+            movzx   ecx, byte [x]
+            movzx   ax, byte [V + ecx]
+            mul     FONTSET_BYTES_PER_CHAR
+            mov     word [I], ax
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_case_33: ; Store BCD for V[X] starting at address I
+            ; TODO impl
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_case_55: ; Copy sprite from registers 0 to X into memory at address I
+            ; TODO impl
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_case_65: ; Copy sprite from memory at address X into registers 0 to I
+            ; TODO impl
+            add     word [P_C], 2
+            jmp     .sw4_end
+
+        .sw4_default:
+            movzx   eax, word [opcode]
+            stdcall unknown_opcode, eax
+        .sw4_end:
         jmp     .sw1_end
 
 .sw1_default:

@@ -69,6 +69,11 @@ start:
         ; int     0x40
         ; mov     dword [emulation_thread_id], eax
 
+        ; mov     byte [gfx + 5], 1
+        ; mov     byte [gfx + 64], 1
+        ; mov     byte [gfx + 65], 1
+        ; mov     byte [gfx + 64*2 + 3], 1
+
 .event_loop:
         mcall   23, CLOCK_RATE ; wait for event with CLOCK_RATE timeout
         ;DEBUGF  DBG_INFO, "evenp loop iter i\n"
@@ -92,7 +97,7 @@ start:
                 mcall   -1
 
         .event_default:
-                stdcall chip8_emulatecycle
+                ;stdcall chip8_emulatecycle
                 cmp     byte [chip8_draw_flag], 0
                 jz      @f        
                 stdcall draw_screen
