@@ -49,7 +49,7 @@ endp
 
 ; calculate (num % num_mod) / num_div
 align 4
-proc mod_div stdcall num: dword, num_mod: dword, num_div:dword ; TODO check
+proc mod_div stdcall, num: dword, num_mod: dword, num_div:dword ; TODO check
 ; in:  num - number
 ;      num_mod - first divisor
 ;      num_div - second divisor

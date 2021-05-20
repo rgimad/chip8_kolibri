@@ -97,7 +97,7 @@ start:
                 mcall   -1
 
         .event_default:
-                ;stdcall chip8_emulatecycle
+                stdcall chip8_emulatecycle
                 cmp     byte [chip8_draw_flag], 0
                 jz      @f        
                 stdcall draw_screen

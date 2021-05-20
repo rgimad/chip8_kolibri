@@ -444,8 +444,15 @@ proc chip8_emulatecycle stdcall
         mov     byte [V + ecx], al
         jmp     .sw1_end
 
-.sw1_case_D000: ; Dxyn: Display an n-byte sprite starting at memory location I at (Vx, Vy) on the screen, VF = collision
-        ; TODO impl
+.sw1_case_D000: ; TODO check; Dxyn: Display an n-byte sprite starting at memory location I at (Vx, Vy) on the screen, VF = collision
+        movzx   ecx, byte [x]
+        movzx   eax, byte [V + ecx]
+        movzx   ecx, byte [y]
+        movzx   ebx, byte [V + ecx]
+        movzx   ecx, byte [n]
+        stdcall chip8_draw_sprite, eax, ebx, ecx
+        mov     byte [chip8_draw_flag], 1
+        add     word [P_C], 2
         jmp     .sw1_end
 
 .sw1_case_E000: ; key-pressed events
@@ -519,7 +526,8 @@ proc chip8_emulatecycle stdcall
         .sw4_case_29: ; TODO check; I = location of font for character V[X]
             movzx   ecx, byte [x]
             movzx   ax, byte [V + ecx]
-            mul     FONTSET_BYTES_PER_CHAR
+            mov     bx, FONTSET_BYTES_PER_CHAR
+            mul     bx
             mov     word [I], ax
             add     word [P_C], 2
             jmp     .sw4_end
@@ -530,13 +538,13 @@ proc chip8_emulatecycle stdcall
 
             stdcall mod_div, ebx, 1000, 100
             movzx   ecx, word [I]
-            mov     byte [memory + ecx], eax
+            mov     byte [memory + ecx], al
 
             stdcall mod_div, ebx, 100, 10
-            mov     byte [memory + ecx + 1], eax
+            mov     byte [memory + ecx + 1], al
 
             stdcall mod_div, ebx, 10, 1
-            mov     byte [memory + ecx + 2], eax
+            mov     byte [memory + ecx + 2], al
 
             add     word [P_C], 2
             jmp     .sw4_end
@@ -592,4 +600,80 @@ proc unknown_opcode stdcall, op:word
         DEBUGF DBG_ERR, "Error: unknown opcode 0x%x\n", [op]:4
         mov     eax, -1
         int     0x40
+endp
+
+; draw sprite from memory to gfx; TODO check;
+; if collision then V[0xF] = 1
+align 4
+proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
+        locals
+          row         dd ?
+          col         dd ?
+          byte_index  dd ?
+          bit_index   dd ?
+          pixelp      dd ?
+          temp        dd ?
+          _byte       db ?
+          _bit        db ?
+        endl
+        
+        movzx   eax, byte [y]
+        mov     dword [row], eax
+        movzx   eax, byte [x]
+        mov     dword [col], eax
+        mov     byte [V + 0xF], 0
+        mov     dword [byte_index], 0
+.for1:
+        movzx   eax, byte [n] 
+        cmp     dword [byte_index], eax
+        jae     .for1_end
+        
+        movzx   ecx, word [I]
+        add     ecx, dword [byte_index]
+        mov     al, byte [memory + ecx]
+        mov     byte [_byte], al
+        mov     dword [bit_index], 0
+.for2:
+        cmp     dword [bit_index], 8
+        jae     .for2_end
+
+        mov     ecx, dword [bit_index]
+        shr     byte [_byte], cl
+        and     byte [_byte], 1
+
+        xor     edx, edx
+        mov     eax, dword [row]
+        add     eax, dword [byte_index]
+        mov     ecx, GFX_ROWS
+        div     ecx
+        imul    edx, GFX_COLS
+        mov     dword [temp], edx
+        mov     eax, dword [col]
+        add     eax, 7
+        sub     eax, dword [bit_index]
+        xor     edx, edx
+        mov     ecx, GFX_COLS
+        div     ecx
+        add     edx, gfx
+        mov     dword [pixelp], edx
+
+        cmp     byte [_bit], 1
+        jne     .if2_end
+
+        cmp     byte [pixelp], 1
+        jne     .if2_end
+
+        mov     byte [V + 0xF], 1
+.if2_end:
+
+        mov     al, byte [pixelp]
+        xor     al, byte [_bit]
+        mov     byte [pixelp], al
+
+        inc     dword [bit_index]
+.for2_end:
+        inc     dword [byte_index]
+.for1_end:
+
+        ret
 endp
