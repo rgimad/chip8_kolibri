@@ -645,6 +645,8 @@ proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
           _bit        db ?
         endl
         
+        DEBUGF  DBG_INFO, "draw_sprite x = %u, y = %u, n = %u\n", [x], [y], [n]
+
         movzx   eax, byte [y]
         mov     dword [row], eax
         movzx   eax, byte [x]
@@ -682,8 +684,11 @@ proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
         xor     edx, edx
         mov     ecx, GFX_COLS
         div     ecx
+        add     edx, dword [temp]
         add     edx, gfx
         mov     dword [pixelp], edx
+
+        DEBUGF  DBG_INFO, "gfx = %x, pixelp = %x\n", gfx, edx
 
         cmp     byte [_bit], 1
         jne     .if2_end
@@ -696,11 +701,18 @@ proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
 
         mov     al, byte [pixelp]
         xor     al, byte [_bit]
-        mov     byte [pixelp], al
+        mov     ebx, dword [pixelp]
+        mov     byte [ebx], al
+
+        ; mov     eax, dword [x] ;;
+        ; mov     ebx, dword [y] ;;
+        ; imul    ebx, 64 ;;
+        ; mov     byte [gfx + ebx + eax], 1 ; DBG ;;;
 
         inc     dword [bit_index]
         jmp     .for2
 .for2_end:
+
         inc     dword [byte_index]
         jmp     .for1
 .for1_end:
