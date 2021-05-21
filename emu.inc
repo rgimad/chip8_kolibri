@@ -694,20 +694,21 @@ proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
         add     edx, gfx
         mov     dword [pixelp], edx
 
-        DEBUGF  DBG_INFO, "gfx = %x, pixelp = %x\n", gfx, edx
+        ; DEBUGF  DBG_INFO, "gfx = %x, pixelp = %x\n", gfx, edx
 
         cmp     byte [_bit], 1
         jne     .if2_end
 
-        cmp     byte [pixelp], 1
+        mov     eax, dword [pixelp]
+        cmp     byte [eax], 1
         jne     .if2_end
 
         mov     byte [V + 0xF], 1
 .if2_end:
 
-        mov     al, byte [pixelp]
-        xor     al, byte [_bit]
         mov     ebx, dword [pixelp]
+        mov     al, byte [ebx]
+        xor     al, byte [_bit]
         mov     byte [ebx], al
 
         ; mov     eax, dword [x] ;;

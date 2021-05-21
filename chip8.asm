@@ -19,9 +19,9 @@ include 'constants.inc'
 align 4
 start:
         ; init application heap:
-        mov     eax, 68
-        mov     ebx, 11
-        int     0x40
+        ; mov     eax, 68
+        ; mov     ebx, 11
+        ; int     0x40
 
         ; get id of current (main) thread
         ; mov     eax, 9
