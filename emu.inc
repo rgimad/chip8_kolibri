@@ -639,10 +639,8 @@ endp
 ; draw sprite from memory to gfx; TODO check;
 ; if collision then V[0xF] = 1
 align 4
-proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
+proc chip8_draw_sprite stdcall, col: dword, row: dword, n: dword
         locals
-          row         dd ?
-          col         dd ?
           byte_index  dd ?
           bit_index   dd ?
           pixelp      dd ?
@@ -651,12 +649,13 @@ proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
           _bit        db ?
         endl
         
-        DEBUGF  DBG_INFO, "draw_sprite x = %u, y = %u, n = %u\n", [x], [y], [n]
+        DEBUGF  DBG_INFO, "draw_sprite x = %u, y = %u, n = %u\n", [col], [row], [n]
 
-        movzx   eax, byte [y]
-        mov     dword [row], eax
-        movzx   eax, byte [x]
-        mov     dword [col], eax
+        movzx   eax, word [I]
+        mov     ebx, dword [memory + eax]
+        mov     ecx, dword [memory + eax + 4]
+        DEBUGF  DBG_INFO, "I = %x, at I: %x, at I + 4: %x\n", eax, ebx, ecx
+
         mov     byte [V + 0xF], 0
         mov     dword [byte_index], 0
 .for1:
@@ -674,25 +673,18 @@ proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
         jae     .for2_end
 
         mov     ecx, dword [bit_index]
-        shr     byte [_byte], cl
-        and     byte [_byte], 1
+        mov     al, byte [_byte]
+        shr     al, cl
+        and     al, 1
+        mov     byte [_bit], al
 
-        xor     edx, edx
         mov     eax, dword [row]
         add     eax, dword [byte_index]
-        mov     ecx, GFX_ROWS
-        div     ecx
-        imul    edx, GFX_COLS
-        mov     dword [temp], edx
-        mov     eax, dword [col]
-        add     eax, 7
-        sub     eax, dword [bit_index]
-        xor     edx, edx
-        mov     ecx, GFX_COLS
-        div     ecx
-        add     edx, dword [temp]
-        add     edx, gfx
-        mov     dword [pixelp], edx
+        imul    eax, GFX_COLS
+        add     eax, dword [col]
+        add     eax, dword [bit_index]
+        add     eax, gfx
+        mov     dword [pixelp], eax
 
         ; DEBUGF  DBG_INFO, "gfx = %x, pixelp = %x\n", gfx, edx
 
