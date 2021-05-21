@@ -1,5 +1,5 @@
 ; Author: rgimad (2021)
-; License: ?
+; License: GNU GPL v2
 
 format binary as ""
 use32
