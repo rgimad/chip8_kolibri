@@ -560,6 +560,9 @@ proc chip8_emulatecycle stdcall
 
                 mov    al, byte [V + ecx]
                 mov    byte [memory + ecx + edx], al
+                
+                inc    ecx
+                jmp    .for_sw4_1
             .for_sw4_1_end:
             movzx   ax, byte [x] 
             inc     ax
@@ -578,6 +581,9 @@ proc chip8_emulatecycle stdcall
 
                 mov    al, byte [memory + ecx + edx]
                 mov    byte [V + ecx], al
+
+                inc    ecx
+                jmp    .for_sw4_2
             .for_sw4_2_end:
             movzx   ax, byte [x] 
             inc     ax
