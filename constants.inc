@@ -1,6 +1,6 @@
 ; constants for formatted debug
 __DEBUG__       = 1             ; 0 - disable debug output / 1 - enable debug output
-__DEBUG_LEVEL__ = DBG_ALL       ; set the debug level
+__DEBUG_LEVEL__ = DBG_ERR       ; set the debug level
  
 DBG_ALL       = 0  ; all messages
 DBG_INFO      = 1  ; info and errors

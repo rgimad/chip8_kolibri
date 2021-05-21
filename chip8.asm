@@ -18,18 +18,6 @@ include 'constants.inc'
 ; application's entry point
 align 4
 start:
-        ; init application heap:
-        ; mov     eax, 68
-        ; mov     ebx, 11
-        ; int     0x40
-
-        ; get id of current (main) thread
-        ; mov     eax, 9
-        ; mov     ebx, tmp_buf
-        ; mov     ecx, -1
-        ; int     0x40
-        ; mov     eax, dword [tmp_buf + 30]
-        ; mov     dword [main_thread_id], eax
 
         stdcall chip8_init ; initialize
 
@@ -52,22 +40,6 @@ start:
 
         DEBUGF  DBG_INFO, "file was read. bytes: %x %x %x..\n", [memory + 0x200], [memory + 0x200 + 4], [memory + 0x200 + 8]
         
-        ; allocate memory for emulation thread
-        ; mov     eax, 68
-        ; mov     ebx, 12
-        ; mov     ecx, 4096
-        ; int     0x40
-        ; mov     [emulation_thread_stack_bottom], eax
-
-        ; run emulation in new thread
-        ; mov     eax, 51
-        ; mov     ebx, 1
-        ; mov     ecx, emulation_thread
-        ; mov     edx, [emulation_thread_stack_bottom]
-        ; add     edx, 4092 ; now edx is stack top
-        ; int     0x40
-        ; mov     dword [emulation_thread_id], eax
-
         ; mov     byte [gfx + 5], 1
         ; mov     byte [gfx + 64], 1
         ; mov     byte [gfx + 65], 1
@@ -127,24 +99,6 @@ start:
 
 ;;;;;;;;;;;;;;;;;;;;;;;
 
-
-; emulation_thread:
-;         stdcall get_clock
-;         mov     dword [clock_now], eax
-
-;         stdcall chip8_emulatecycle
-
-;         ; TODO: if (chip8_draw_flag) {  draw(); chip8_draw_flag = false; } }
-;         cmp     byte [chip8_draw_flag], 0
-;         jz      @f
-;         mov     eax, 60
-;         mov     ebx, 2
-;         mov     ecx, dword [main_thread_id]
-;         mov     edx, 0x1337
-;         ;;
-; @@:
-;         ; TODO: if (timediff_ms(&clock_now, &clock_prev) >= CLOCK_RATE_MS) { chip8_tick(); clock_prev = clock_now; }
-;         jmp     emulation_thread
 
 include 'gui.inc'
 

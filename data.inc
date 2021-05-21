@@ -32,13 +32,6 @@
         chip8_draw_flag db 0
         next_rand       dd 1
 
-        ;clock_now   dd 0
-        ;clock_prev  dd 0
-
-        ;main_thread_id  dd 0
-        ;emulation_thread_id dd 0
-        ;emulation_thread_stack_bottom dd 0 ; 
-
         align 4
         fread_struct:
             .subfunction    dd 0               ; + 0

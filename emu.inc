@@ -767,11 +767,6 @@ proc chip8_draw_sprite stdcall, col: dword, row: dword, n: dword
         xor     al, byte [_bit]
         mov     byte [ebx], al
 
-        ; mov     eax, dword [x] ;;
-        ; mov     ebx, dword [y] ;;
-        ; imul    ebx, 64 ;;
-        ; mov     byte [gfx + ebx + eax], 1 ; DBG ;;;
-
         inc     dword [bit_index]
         jmp     .for2
 .for2_end:
@@ -779,6 +774,6 @@ proc chip8_draw_sprite stdcall, col: dword, row: dword, n: dword
         inc     dword [byte_index]
         jmp     .for1
 .for1_end:
-        ; mov     byte [gfx + 64*2 + 10], 1 ; DBG
+
         ret
 endp
