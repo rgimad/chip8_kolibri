@@ -550,13 +550,39 @@ proc chip8_emulatecycle stdcall
             add     word [P_C], 2
             jmp     .sw4_end
 
-        .sw4_case_55: ; Copy sprite from registers 0 to X into memory at address I
-            ; TODO impl
+        .sw4_case_55: ; TODO check; Copy sprite from registers 0 to X into memory at address I
+            movzx   edx, word [I]
+            xor     ecx, ecx
+            .for_sw4_1:
+                movzx  eax, byte [x]
+                cmp    ecx, eax
+                ja     .for_sw4_1_end
+
+                mov    al, byte [V + ecx]
+                mov    byte [memory + ecx + edx], al
+            .for_sw4_1_end:
+            movzx   ax, byte [x] 
+            inc     ax
+            add     word [I], ax
+
             add     word [P_C], 2
             jmp     .sw4_end
 
-        .sw4_case_65: ; Copy sprite from memory at address X into registers 0 to I
-            ; TODO impl
+        .sw4_case_65: ; TODO check; Copy sprite from memory at address X into registers 0 to I
+            movzx   edx, word [I]
+            xor     ecx, ecx
+            .for_sw4_2:
+                movzx  eax, byte [x]
+                cmp    ecx, eax
+                ja     .for_sw4_2_end
+
+                mov    al, byte [memory + ecx + edx]
+                mov    byte [V + ecx], al
+            .for_sw4_2_end:
+            movzx   ax, byte [x] 
+            inc     ax
+            add     word [I], ax
+
             add     word [P_C], 2
             jmp     .sw4_end
 
@@ -673,9 +699,11 @@ proc chip8_draw_sprite stdcall, x: dword, y: dword, n: dword
         mov     byte [pixelp], al
 
         inc     dword [bit_index]
+        jmp     .for2
 .for2_end:
         inc     dword [byte_index]
+        jmp     .for1
 .for1_end:
-
+        ; mov     byte [gfx + 64*2 + 10], 1 ; DBG
         ret
 endp

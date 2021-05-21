@@ -101,7 +101,10 @@ start:
         .event_default:
                 stdcall chip8_emulatecycle
                 cmp     byte [chip8_draw_flag], 0
-                jz      @f        
+                jz      @f   
+
+                ; mov     byte [gfx + 64*2 + 3], 1 ; DBG
+
                 stdcall draw_screen
                 mov     byte [chip8_draw_flag], 0
         @@:
