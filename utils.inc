@@ -69,6 +69,36 @@ proc mod_div stdcall, num: dword, num_mod: dword, num_div:dword ; TODO check
         ret
 endp
 
+; update key map; TODO impl;
+align 4
+proc keyboard_update stdcall, _code: dword
+        push    eax ebx ecx edx
+        mov     eax, dword [_code]
+
+        mov     edx, eax
+        and     edx, 0xF000
+
+        mov     ebx, eax
+        and     ebx, 0x0F00
+        shr     ebx, 8
+
+        xor     ecx, ecx
+        cmp     edx, 0x6000
+        jne     .if1_end
+        mov     ecx, 0x9
+.if1_end:
+        add     ebx, ecx
+        ; DEBUGF  DBG_INFO, "keynum %x\n", ebx
+        cmp     ebx, KEY_SIZE
+        jae     .ret
+        DEBUGF  DBG_INFO, "keynum %x\n", ebx
+        mov     byte [key + ebx], 1
+        
+.ret:
+        pop     edx ecx ebx eax
+        ret
+endp
+
 ; ; get seconds count
 ; align 4
 ; proc get_clock stdcall

@@ -16,6 +16,8 @@ proc chip8_init stdcall
         stdcall _memset, key, 0, KEY_SIZE
         ;DEBUGF  DBG_INFO, "ESP = %x\n", esp
 
+        mcall   66, 1 ; set scancode keyboard mode
+
         xor     ecx, ecx
 @@:
         cmp     ecx, 80
@@ -101,7 +103,7 @@ proc chip8_emulatecycle stdcall
         movzx   bx, byte [memory + 1 + ecx]
         or      ax, bx
         mov     word [opcode], ax
-        DEBUGF  DBG_INFO, "opcode = 0x%x, ax = 0x%x\n", [opcode]:4, ax
+        ; DEBUGF  DBG_INFO, "opcode = 0x%x, ax = 0x%x\n", [opcode]:4, ax
 
         shr     ax, 8
         and     ax, 0x000F
@@ -124,7 +126,7 @@ proc chip8_emulatecycle stdcall
         and     ax, 0x0FFF
         mov     word [nnn], ax
 
-        ;DEBUGF  DBG_INFO, "P_C: 0x%x Op: 0x%x\n",  [P_C],  [opcode] ; was word word
+        ; DEBUGF  DBG_INFO, "P_C: 0x%x Op: 0x%x\n",  [P_C],  [opcode]:4 ; was word word
         ; TODO test this and watch values of x, y, n, kk, nnn
 
         ; decode & execute
@@ -198,10 +200,10 @@ proc chip8_emulatecycle stdcall
             add     word [P_C], 2
             jmp     .sw2_end
 
-        .sw2_case_EE: ; ret
+        .sw2_case_EE: ; TODO check!!; ret
             dec     word [S_P]
             movzx   ecx, word [S_P]
-            mov     ax, word [stackmem + ecx*2]
+            mov     ax, word [stackmem + ecx*2] 
             mov     word [P_C], ax
             jmp     .sw2_end
 
@@ -211,16 +213,16 @@ proc chip8_emulatecycle stdcall
         .sw2_end:
         jmp     .sw1_end
 
-.sw1_case_1000: ; 1nnn: jump to address nnn
+.sw1_case_1000: ; TODO check; 1nnn: jump to address nnn
         mov     ax, word [nnn]
         mov     word [P_C], ax
         jmp     .sw1_end
 
-.sw1_case_2000: ; 2nnn: call address nnn
+.sw1_case_2000: ; TODO check; 2nnn: call address nnn
         mov     ax, word [P_C]
         add     ax, 2
         movzx   ecx, word [S_P]
-        mov     word [stackmem + ecx*2], ax
+        mov     word [stackmem + ecx*2], ax   
         inc     word [S_P]
         mov     ax, word [nnn]
         mov     word [P_C], ax
@@ -457,8 +459,45 @@ proc chip8_emulatecycle stdcall
         add     word [P_C], 2
         jmp     .sw1_end
 
-.sw1_case_E000: ; key-pressed events
-        ; TODO impl
+.sw1_case_E000: ; TODO check; key-pressed events
+        cmp    byte [kk], 0x9E
+        je     .sw5_case_9E
+
+        cmp    byte [kk], 0xA1
+        je     .sw5_case_A1
+
+        jmp    .sw5_default
+
+        .sw5_case_9E: ; skip next instruction if key V[X] is pressed
+            movzx   ecx, byte [x]
+            movzx   edx, byte [V + ecx]
+            mov     bl, byte [key + edx]
+            mov     ax, 2
+            cmp     bl, 1
+            jne     .sw5_case_9E_endcheck
+            mov     ax, 4
+            mov     byte [key + edx], 0 ; release pressed key
+            .sw5_case_9E_endcheck:
+            add     word [P_C], ax
+            jmp     .sw5_end
+
+        .sw5_case_A1: ; skip next instruction if key V[X] is NOT pressed
+            movzx   ecx, byte [x]
+            movzx   eax, byte [V + ecx]
+            mov     bl, byte [key + eax]
+            mov     ax, 4
+            cmp     bl, 1
+            jne     .sw5_case_A1_endcheck
+            mov     ax, 2
+            .sw5_case_A1_endcheck:
+            mov     byte [key + edx], 0 ; release pressed key
+            add     word [P_C], ax
+            jmp     .sw5_end
+
+        .sw5_default:
+            movzx   eax, word [opcode]
+            stdcall unknown_opcode, eax
+        .sw5_end:
         jmp     .sw1_end
 
 .sw1_case_F000: ; misc
@@ -498,9 +537,32 @@ proc chip8_emulatecycle stdcall
             add     word [P_C], 2
             jmp     .sw4_end
 
-        .sw4_case_0A: ; wait for key instruction
-            ; TODO impl
-            add     word [P_C], 2
+        .sw4_case_0A: ; TODO check; wait for key instruction
+            ;.sw4_case_0A_loop:
+                ;mcall 2
+                ;stdcall  keyboard_update, eax
+                xor  ecx, ecx
+                .sw4_case_0A_loop2:
+                    cmp  ecx, KEY_SIZE
+                    jae  .sw4_case_0A_loop_end ;
+
+                    cmp  byte [key + ecx], 1
+                    jne  .sw4_case_0A_loop2_endcheck
+
+                    movzx edx, byte [x]
+                    mov   byte [V + edx], cl
+                    mov  byte [key + ecx], 0 ; release pressed key
+                    ;jmp  .sw4_case_0A_loop_end
+                    add     word [P_C], 2
+                    jmp     .sw4_end
+
+                    .sw4_case_0A_loop2_endcheck:
+                    inc  ecx
+                    jmp  .sw4_case_0A_loop2
+
+            ;jmp  .sw4_case_0A_loop
+            .sw4_case_0A_loop_end:
+            ;add     word [P_C], 2
             jmp     .sw4_end
 
         .sw4_case_15: ; TODO check; delay_timer = V[X]

@@ -31,9 +31,6 @@ start:
         ; mov     eax, dword [tmp_buf + 30]
         ; mov     dword [main_thread_id], eax
 
-        ; TODO set keyboard mode (which?)
-        ; maybe to chip8_init
-
         stdcall chip8_init ; initialize
 
         DEBUGF  DBG_INFO, "app started, args = %s\n", cmdline
@@ -83,6 +80,9 @@ start:
         cmp     eax, 1
         je      .event_redraw
 
+        cmp     eax, 2
+        je      .event_key
+
         cmp     eax, 3
         je      .event_button
 
@@ -90,6 +90,12 @@ start:
 
         .event_redraw:
                 stdcall draw_main_window
+                jmp     .event_default
+
+        .event_key:
+                mcall   2
+                stdcall keyboard_update, eax
+                DEBUGF  DBG_INFO, "key scancode %x\n", eax:4
                 jmp     .event_default
 
         .event_button:

@@ -17,7 +17,7 @@ GFX_ROWS = 32
 GFX_COLS = 64
 GFX_SIZE = GFX_ROWS * GFX_COLS
 GFX_PIX_SIZE = 10
-CLOCK_RATE = 2 ; in 10^-2 seconds
+CLOCK_RATE = 1 ; in 10^-2 seconds
 
 
 include '../../macros.inc'
