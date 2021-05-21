@@ -443,6 +443,7 @@ proc chip8_emulatecycle stdcall
         and     al, byte [kk]
         movzx   ecx, byte [x]
         mov     byte [V + ecx], al
+        add     word [P_C], 2
         jmp     .sw1_end
 
 .sw1_case_D000: ; TODO check; Dxyn: Display an n-byte sprite starting at memory location I at (Vx, Vy) on the screen, VF = collision
