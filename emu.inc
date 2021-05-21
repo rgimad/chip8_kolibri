@@ -682,7 +682,8 @@ proc chip8_draw_sprite stdcall, col: dword, row: dword, n: dword
         add     eax, dword [byte_index]
         imul    eax, GFX_COLS
         add     eax, dword [col]
-        add     eax, dword [bit_index]
+        add     eax, 7
+        sub     eax, dword [bit_index]
         add     eax, gfx
         mov     dword [pixelp], eax
 
