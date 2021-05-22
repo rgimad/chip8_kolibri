@@ -9,4 +9,4 @@ Type for example:
 
 chip8 roms/ibm.chip8
 
-P.S. ROMs from https://github.com/dmatlack/chip8
+P.S. ROMs from https://github.com/dmatlack/chip8/tree/master/roms
