@@ -8,3 +8,5 @@ Open shell in current directory (in Eolite Ctrl+G).
 Type for example:
 
 chip8 roms/ibm.chip8
+
+P.S. ROMs from https://github.com/dmatlack/chip8
