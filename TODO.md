@@ -13,7 +13,7 @@
 - ~~add missing opcodes implementation !!!~~
 - ~~add keyboard processing:\~~
   in main cycle process also keyboard events: keydown and keyup\
-  on keydown mark key with 1 in array, on keyup mark with 0\~~
+  on keydown mark key with 1 in array, on keyup mark with 0~~
 
 - make graphics faster !\
   maybe use double buffering (i.e draw image in internal buffer and then send it to the screen using one syscall)\
