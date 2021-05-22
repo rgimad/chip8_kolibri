@@ -21,7 +21,7 @@
 - fix Page fault when running tests/tetris1
 
 - fix the follwing bug:\
-  when intro of roms/invaders1.ch8 is playing, moving the emulator's window causes crash (maybe PF).
+  when intro of roms/invaders1.ch8 is playing, moving (or just activating it) the emulator's window causes crash (maybe PF).
 
 
 #### Low priority:
