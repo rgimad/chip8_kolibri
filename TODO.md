@@ -5,10 +5,10 @@
 - ~~add rand() simple implementation~~
 - ~~add chip8_tick() function~~
 - ~~add main cycle\~~
-  ~~using sysfn 23 wait event with timeout 0.05 sec,\~~
-  ~~check which event,\~~
-  ~~if event none, then check how much time passed since the previous tick,\~~
-  ~~if passed >= CLOCK_MS then make tick and redraw if redraw flag is up (if so, redraw and set flag down after redraw) (?)~~
+  using sysfn 23 wait event with timeout 0.05 sec,\
+  check which event,\
+  if event none, then check how much time passed since the previous tick,\
+  if passed >= CLOCK_MS then make tick and redraw if redraw flag is up (if so, redraw and set flag down after redraw) (?)~~
 - ~~add drawing procedure, which renders gfx array to the actual scren~~
 - ~~add missing opcodes implementation !!!~~
 - ~~add keyboard processing:\~~
@@ -22,7 +22,7 @@
 
 
 #### Low priority:
-- in commands 5xy0, 9xy0 need to check if last digit is 0 or not
+- in commands 5xy0, 9xy0 need to check if last digit is 0 or not . (?)
 - ~~add debug output for each command~~
 - add more comments
 - add more tests
