@@ -11,7 +11,7 @@
   if passed >= CLOCK_MS then make tick and redraw if redraw flag is up (if so, redraw and set flag down after redraw) (?)~~
 - ~~add drawing procedure, which renders gfx array to the actual scren~~
 - ~~add missing opcodes implementation !!!~~
-- ~~add keyboard processing:\
+- ~~add keyboard processing:\~~
   in main cycle process also keyboard events: keydown and keyup\~~
   on keydown mark key with 1 in array, on keyup mark with 0\~~
 
