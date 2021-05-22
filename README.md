@@ -6,5 +6,5 @@
 #### Usage example:
 In shell in current directory:
 ```
-chip8 tests/ibm.ch8
+chip8 roms/ibm.ch8
 ```

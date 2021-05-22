@@ -1,2 +1,2 @@
 #SHS
-chip8 tests/keytest.ch8
+chip8 roms/keytest.ch8
