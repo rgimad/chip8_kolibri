@@ -20,6 +20,9 @@
 
 - fix Page fault when running tests/tetris1
 
+- fix the follwing bug:\
+  when intro of roms/invaders1.ch8 is playing, moving the emulator's window causes crash (maybe PF).
+
 
 #### Low priority:
 - in commands 5xy0, 9xy0 need to check if last digit is 0 or not . (?)
