@@ -18,10 +18,10 @@
 - make graphics faster !\
   maybe use double buffering (i.e draw image in internal buffer and then send it to the screen using one syscall)\
 
-- fix Page fault when running tests/tetris1
+- ~~fix Page fault when running tests/tetris1~~
 
-- fix the follwing bug:\
-  when intro of roms/invaders1.ch8 is playing, moving (or just activating it) the emulator's window causes crash (maybe PF).
+- ~~fix the follwing bug:\
+  when intro of roms/invaders1.ch8 is playing, moving (or just activating it) the emulator's window causes crash (maybe PF).~~
 
 
 #### Low priority:
